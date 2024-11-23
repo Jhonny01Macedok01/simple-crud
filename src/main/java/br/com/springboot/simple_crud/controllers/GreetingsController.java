@@ -77,7 +77,7 @@ public class GreetingsController {
     public ResponseEntity<?> atualizar(@RequestBody Usuario usuario){ /*Recebe os dados para salvar*/
     	
     	if (usuario.getId() == null) {	
-        	return new ResponseEntity<String>("Id do usuário não foi informado, para atualização!", HttpStatus.OK);
+        	return new ResponseEntity<String>("Id do usuário não foi informado, para atualização!", HttpStatus.CONFLICT);
 
     	}
     	
@@ -99,6 +99,14 @@ public class GreetingsController {
     public ResponseEntity<Usuario> buscaruserid(@RequestParam(name = "iduser") Long iduser){ /*Recebe os dados para salvar*/
     	Usuario  usuario = usuarioRepository.findById(iduser).get();
     	return new ResponseEntity<Usuario>(usuario, HttpStatus.OK);
+    	 
+    }
+    
+    @GetMapping(value = "buscarPorNome") /*mapeia a url*/
+    @ResponseBody /*vai fazer a descrição da Resposta*/
+    public ResponseEntity<List<Usuario>> buscarPorNome(@RequestParam(name = "name") String name){ /*Recebe os dados para salvar*/
+    	List<Usuario>  usuario = usuarioRepository.buscarPorNome(name.trim().toUpperCase());
+    	return new ResponseEntity<List<Usuario>>(usuario, HttpStatus.OK);
     	 
     }
     
