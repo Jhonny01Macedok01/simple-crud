@@ -34,6 +34,46 @@
 
 <button type="button" class="btn btn-primary" onclick="salvarUsuario()">Salvar</button>
 <button type="button" class="btn btn-secondary"onclick="document.getElementById('formCadastroUser').reset();">Novo</button>
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalPesquisarUser">Pesquisar</button>
+
+
+
+<div class="modal fade" id="modalPesquisarUser" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Pesquisa de Usuário</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="nameBusca" class="col-form-label">Informe o Nome:</label>
+            <input type="text" class="form-control" id="nameBusca">
+          </div>
+          <button type="button" class="btn btn-success" onclick="pesquisarUser()">Buscar</button>
+        </form>
+
+					<table class="table" id="tabelaresultados">
+						<thead>
+							<tr>
+								<th scope="col">ID</th>
+								<th scope="col">Nome</th>
+								<th scope="col">Editar</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+
+				</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
@@ -43,19 +83,72 @@
 
 
 <script type="text/javascript">
+
+
+function pesquisarUser(){
+	var nome = $('#nameBusca').val();
+	
+	if (nome != null && nome.trim() != ''){
+		
+		$.ajax({
+			method : "GET",
+			url: "buscarPorNome",
+			data: "name=" + nome ,
+			success: function (response) {
+				$('#tabelaresultados > tbody > tr').remove();
+				
+				for (var i = 0; i < response.length; i++){
+					$('#tabelaresultados > tbody').append('<tr><td>'+response[i].id+'</td><td>'+response[i].nome+'</td><td><button type="button" onclick="colocarEmEdicao('+response[i].id+')" class="btn btn-primary">Ver</button></td></tr>');
+					
+				}
+			
+			}
+			
+		}).fail(function (xrh, status, errorThown) {
+			alert("Erro ao Buscar Usuário: " + xhr.responseText);
+		});
+		
+	}
+}
+
+
+
+function colocarEmEdicao(id){
+	
+	$.ajax({
+		method : "GET",
+		url: "buscaruserid",
+		data: "iduser=" + id ,
+		success: function (response) {
+			
+			$("#id").val(response.id);
+			$("#nome").val(response.nome);
+			$("#idade").val(response.idade);
+			
+			$('#modalPesquisarUser').modal('hide');			
+		}
+		
+	}).fail(function (xrh, status, errorThown) {
+		alert("Erro ao Buscar Usuário por id: " + xhr.responseText);
+	});
+}
+
+
 	function salvarUsuario(){
+		
 		var id = $("#id").val();
 		var nome = $("#nome").val();
 		var idade = $("#idade").val();
 		
 	
+		/*requisição de salvar, no banco usando ajax, comunicando com o and point de API'salvar''*/
 		$.ajax({
 			method: "POST",
 			url: "salvar",
 			data: JSON.stringify({id : id, nome : nome,idade: idade}),
 			contentType: "application/json; charset=utf-8",
 			success: function (response) {
-				$("#id").val(response.id);
+				$("#id").val(response.id); /*ao clicar em salvar, essa função busca o 'id' para o front, torna as informações editáveis,pois ao mesmo tempo que esse método salva ele tmb edita*/
 				alert("Usuário Gravado com Sucesso!");
 			}
 			
