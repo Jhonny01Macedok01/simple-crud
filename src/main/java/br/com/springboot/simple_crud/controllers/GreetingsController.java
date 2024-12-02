@@ -21,10 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.springboot.simple_crud.model.Usuario;
 import br.com.springboot.simple_crud.repository.UsuarioRepository;
 
-/**
- *
- * A sample greetings controller to return greeting text
- */
+
 @RestController
 public class GreetingsController {
 	

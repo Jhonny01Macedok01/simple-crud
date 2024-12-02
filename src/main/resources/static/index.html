@@ -100,16 +100,21 @@ html {
 
 
 
-function botaoDeletarDaTela(){
-	
-	var id = $('#id').val();
-	
-	if(id != null && id.trim() != ''){
-	deleteUser(id);
-	 document.getElementById('formCadastroUser').reset();
+function botaoDeletarDaTela() {
+    var id = $('#id').val();
+    var nome = $('#nome').val();
+    var idade = $('#idade').val();
 
-	}
-	
+    // Verifica se os campos estão preenchidos
+    if ((nome == null || nome.trim() == '') || (idade == null || idade.trim() == '')) {
+        alert('Não é possível deletar sem preencher os campos!');
+        return;
+    }
+
+    if (id != null && id.trim() != '') {
+        deleteUser(id);
+        document.getElementById('formCadastroUser').reset();
+    }
 }
 
 
